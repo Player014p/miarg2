@@ -140,7 +140,7 @@
             <div></div>
         </div>
         <h1><span style="color: black;">mi</span><span style="color: white;">Argentina</span></h1>        <div class="user-info">
-            <img src="img/user.png" alt="User Avatar">
+            <img onclick="cerrarSesion()" src="img/user.png" alt="User Avatar">
         </div>
     </div>
     <div class="content">
@@ -199,6 +199,12 @@
         function dni() {
             window.location.href= "verDni.html"
         }
+        function cerrarSesion() {
+    // Eliminar el correo almacenado en localStorage
+    localStorage.removeItem('mail');
+    // Redirigir a la página de inicio de sesión
+    window.location.href = "login.html";
+}
     </script>
 </body>
 </html>
