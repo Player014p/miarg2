@@ -132,71 +132,81 @@ button:hover {
     </div>
 
 <script>
-  // Verificar el estado de la sesión al cargar la página
-  window.onload = function() {
-    if (localStorage.getItem("sessionActive")) {
-      window.location.href = "index.html"; // Redirige a la página principal si la sesión está activa
+function checkSession() {
+    // Solo redirigir si estamos en la página de inicio de sesión
+    if (window.location.pathname.includes('login.html')) {
+        const mail = localStorage.getItem('mail');
+        if (mail) {
+            // Si hay un correo almacenado en localStorage, redirigir al usuario a la página de inicio
+            window.location.href = "index.html";
+        }
     }
-  };
+}
 
-  function crearCuenta() {
+function crearCuenta() {
     window.location.href = 'registrarse.html';
-  }
+}
 
-  fetch('fonts.json')
+fetch('fonts.json')
     .then(response => response.json())
     .then(config => {
-      const firebaseConfig = config;
-      const app = firebase.initializeApp(firebaseConfig);   
+        const firebaseConfig = config;
+        const app = firebase.initializeApp(firebaseConfig);   
     })
     .catch(error => {
-      console.error('Error al cargar la configuración de Firebase:', error);
+        console.error('Error al cargar la configuración de Firebase:', error);
     });
 
-  function datosEnviadosIniciarSesion() {
+function datosEnviadosIniciarSesion() {
     const mail = document.getElementById('mail2').value;
     const contrasenia = document.getElementById('contra2').value;
     const db = firebase.firestore();
     const usuariosRef = db.collection('Usuarios');
-    document.getElementById("todo").style.display= "none";
-    document.getElementById("load").style.display= "block";
+    document.getElementById("todo").style.display = "none";
+    document.getElementById("load").style.display = "block";
 
     usuariosRef.where('mail', '==', mail)
-      .get()
-      .then((querySnapshot) => {
-        if (!(querySnapshot.size > 0)) {
-          console.log("El usuario no existe");
-          document.getElementById("mailError2").style.display = "block";
-          document.getElementById("todo").style.display= "block";
-          document.getElementById("load").style.display= "none";
-        } else {
-          usuariosRef.where('contrasenia', '==', contrasenia)
-            .get()
-            .then((querySnapshot) => {
-              if (!(querySnapshot.size > 0)) {
-                console.log("Contraseña incorrecta");
-                document.getElementById("contraError2").style.display = "block";
-                document.getElementById("mailError2").style.display = "none";
-                document.getElementById("todo").style.display= "block";
-                document.getElementById("load").style.display= "none";
-              } else {
-                console.log("Inicio de sesión exitoso");
-                document.getElementById("mailError2").style.display = "none";
-                document.getElementById("contraError2").style.display = "none";
-                localStorage.setItem("mail", mail);
-                localStorage.setItem("sessionActive", "true"); // Establecer la bandera de sesión activa
-                window.location.href = "index.html";
-              }
-            })
-            .catch((error) => {
-              console.error('Error al consultar la base de datos:', error);
-            });
-        }
-      })
-      .catch((error) => {
-        console.error('Error al consultar la base de datos:', error);
-      });    
-  }
+        .get()
+        .then((querySnapshot) => {
+            if (!(querySnapshot.size > 0)) {
+                console.log("El usuario no existe");
+                document.getElementById("mailError2").style.display = "block";
+                document.getElementById("todo").style.display = "block";
+                document.getElementById("load").style.display = "none";
+            } else {
+                usuariosRef.where('contrasenia', '==', contrasenia)
+                    .get()
+                    .then((querySnapshot) => {
+                        if (!(querySnapshot.size > 0)) {
+                            console.log("Contraseña incorrecta");
+                            document.getElementById("contraError2").style.display = "block";
+                            document.getElementById("mailError2").style.display = "none";
+                            document.getElementById("todo").style.display = "block";
+                            document.getElementById("load").style.display = "none";
+                        } else {
+                            console.log("entro");
+                            document.getElementById("mailError2").style.display = "none";
+                            document.getElementById("contraError2").style.display = "none";
+                            localStorage.setItem("mail", mail);
+                            window.location.href = "index.html";
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error al consultar la base de datos:', error);
+                    });
+            }
+        })
+        .catch((error) => {
+            console.error('Error al consultar la base de datos:', error);
+        });    
+}
+
+function cerrarSesion() {
+    // Eliminar el correo almacenado en localStorage
+    localStorage.removeItem('mail');
+    // Redirigir a la página de inicio de sesión
+    window.location.href = "login.html";
+}
 </script>
 </body>
 </html>
